@@ -1,0 +1,504 @@
+<meta charset="utf-8">
+<title>好茶日 24H</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Noto+Serif+SC:wght@400;600;900&family=Pinyon+Script&display=swap">
+<style>
+/* Layout: 午后客厅 — 主视觉与罗马数字钟并排；茶单是黑蕾丝框纸卡；阅读页是一栏纸面 */
+:root{
+  --paper:#F1E6D6;      /* 奶油纸 */
+  --paper-2:#E8D9C4;    /* 纸的阴影面 */
+  --ink:#2E1F1A;        /* 深木棕正文 */
+  --ink-soft:#6B544A;
+  --wine:#7A2E2A;       /* 背心酒红 */
+  --rose:#C98F8A;       /* 围巾玫瑰 */
+  --brass:#A9853A;      /* 留声机黄铜 */
+  --stripe-a:#DCD3C8; --stripe-b:#CFC5B9; /* 茶单底纹 */
+  --lace:#1F1715;       /* 黑蕾丝 */
+  --card:#F7F0E4;
+  --font-script:"Pinyon Script","Snell Roundhand",cursive;
+  --font-latin:"Cormorant Garamond","Garamond","Times New Roman",serif;
+  --font-body:"Noto Serif SC","Songti SC","STSong","SimSun",serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));}
+/* 背景：雾中教堂，固定一层，不随滚动重绘 */
+.bgfix{position:fixed;inset:0;z-index:-1;background:url("img/bg-cathedral.webp") center top/cover no-repeat;pointer-events:none}
+.bgfix::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(241,230,214,.55),rgba(241,230,214,.72) 45%,rgba(241,230,214,.86))}
+/* 玻璃：只用 blur，不用位移滤镜；高光靠内阴影 */
+.glass{background:rgba(247,240,228,.42);-webkit-backdrop-filter:blur(14px) saturate(1.25);backdrop-filter:blur(14px) saturate(1.25);
+  border:1px solid rgba(255,255,255,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),inset 0 -1px 0 rgba(122,46,42,.08),0 10px 30px -18px rgba(60,30,20,.45)}
+@supports not (backdrop-filter:blur(1px)){.glass{background:rgba(247,240,228,.86)}}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--wine);outline-offset:3px}
+button{font:inherit;color:inherit}
+
+/* 顶栏 */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px))) calc(-1 * max(16px,env(safe-area-inset-right,0px)));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-radius:0;border-left:0;border-right:0;border-top:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--paper)}
+.top{max-width:1180px;margin:0 auto;display:flex;align-items:baseline;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;padding-block:14px 10px}
+.mark{display:flex;align-items:baseline;gap:10px;text-decoration:none}
+.mark b{font-weight:600;font-size:1.05rem;letter-spacing:.14em;color:var(--ink-soft);white-space:nowrap}
+@media (max-width:480px){.mark i{font-size:1.6rem}.mark b{font-size:.9rem;letter-spacing:.1em}}
+.mark i{font-family:var(--font-script);font-style:normal;font-size:2rem;color:var(--wine);line-height:1}
+nav{display:flex;gap:4px 18px;flex-wrap:wrap}
+nav a{text-decoration:none;font-size:.95rem;letter-spacing:.2em;padding:4px 0;border-bottom:1px solid transparent;color:var(--ink-soft)}
+nav a[aria-current="page"],nav a:hover{color:var(--wine);border-color:var(--wine)}
+
+main{max-width:1180px;margin:0 auto;padding-block:28px 64px}
+.view[hidden]{display:none!important}
+
+/* 首页 */
+.home{display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);gap:40px;align-items:start}
+.kv{margin:0;position:sticky;top:16px}
+.kv img{display:block;width:100%;height:auto;border-radius:2px;border:6px solid rgba(255,255,255,.55);box-shadow:0 18px 44px -20px rgba(60,30,20,.6)}
+.kv figcaption{font-size:.82rem;color:var(--ink-soft);margin-top:10px;letter-spacing:.06em;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.lede .eyebrow{font-family:var(--font-script);font-size:1.7rem;color:var(--wine);line-height:1;margin-bottom:6px}
+.lede h1{font-weight:900;font-size:clamp(1.8rem,3.6vw,2.7rem);letter-spacing:.14em;margin:0;line-height:1.2;text-wrap:balance}
+.lede h1 span{font-family:var(--font-script);font-weight:400;color:var(--wine);letter-spacing:0;font-size:1.15em;margin-left:.1em}
+.lede p{margin:.6em 0 0;color:var(--ink-soft);max-width:34em}
+.lede .verse{margin-top:1em;line-height:1.9;font-size:.98rem;letter-spacing:.02em}
+.stats{display:flex;gap:6px 22px;flex-wrap:wrap;margin-top:14px;font-family:var(--font-latin);font-size:1.05rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.stats b{font-family:var(--font-body);color:var(--ink);font-weight:600}
+
+.clock-wrap{margin-top:18px;position:relative}
+.clock-box{position:relative;max-width:600px;margin:0 auto}
+/* 一层玻璃，用遮罩同时切出表蒙圆盘与时段环：半径按 760 视窗换算 */
+.clock-glass{position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  -webkit-backdrop-filter:blur(12px) saturate(1.2);backdrop-filter:blur(12px) saturate(1.2);
+  background:radial-gradient(circle at 38% 30%,rgba(255,255,255,.38),rgba(255,255,255,.08) 55%,rgba(247,240,228,.3));
+  -webkit-mask:radial-gradient(circle,#000 0 66%,transparent 66.4% 68.6%,#000 69% 97.3%,transparent 97.7%);
+  mask:radial-gradient(circle,#000 0 66%,transparent 66.4% 68.6%,#000 69% 97.3%,transparent 97.7%)}
+@supports not (backdrop-filter:blur(1px)){.clock-glass{background:rgba(247,240,228,.8)}}
+#clock{position:relative;display:block;width:100%;height:auto;touch-action:manipulation}
+#clock .slot path{fill:rgba(255,255,255,.14);stroke:rgba(255,255,255,.75);stroke-width:1;transition:fill .25s}
+#clock .slot text{font-family:var(--font-latin);font-size:17px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none;font-variant-numeric:tabular-nums}
+#clock .slot circle{fill:var(--brass)}
+#clock .slot{cursor:pointer;outline:none}
+#clock .slot:hover path,#clock .slot:focus-visible path{fill:rgba(255,255,255,.5)}
+#clock .slot:focus-visible path{stroke:var(--wine);stroke-width:2}
+#clock .slot.on path{fill:rgba(122,46,42,.82);stroke:rgba(255,255,255,.9)}
+#clock .slot.on text{fill:var(--paper)}
+#clock .slot.on circle{fill:var(--paper)}
+#clock .sheen,#clock image,#clock .hand{pointer-events:none}
+#clock .hand{transition:transform .6s cubic-bezier(.5,.05,.3,1.1)}
+.ring-key{text-align:center;font-size:.8rem;color:var(--ink-soft);letter-spacing:.12em;margin-top:6px}
+.preview{min-height:1.7em;text-align:center;font-family:var(--font-latin);font-style:italic;font-size:1.15rem;color:var(--wine);margin-top:4px}
+
+.hour-panel{margin-top:26px;border-top:1px solid rgba(255,255,255,.7);padding-top:18px}
+.hour-panel h2{margin:0 0 12px;display:flex;align-items:baseline;gap:14px;font-weight:600;font-size:1.05rem;letter-spacing:.18em}
+.hour-panel h2 em{font-family:var(--font-latin);font-style:normal;font-size:2.2rem;color:var(--wine);letter-spacing:.02em;font-weight:600;font-variant-numeric:tabular-nums}
+.cards{display:grid;gap:12px}
+.wcard{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:14px 16px;background:rgba(247,240,228,.72);border:1px solid rgba(255,255,255,.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.8);text-decoration:none;transition:transform .2s,border-color .2s}
+.wcard:hover{border-color:var(--wine);transform:translateY(-1px)}
+.wcard .t{font-weight:600;font-size:1.08rem;min-width:0;overflow-wrap:anywhere}
+.wcard .a{color:var(--ink-soft);font-size:.9rem}
+.wcard .m{grid-column:2;grid-row:1/3;align-self:center;text-align:right;font-size:.8rem;color:var(--ink-soft);display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-variant-numeric:tabular-nums}
+
+.chip{display:inline-block;font-size:.72rem;letter-spacing:.1em;padding:1px 8px;border:1px solid var(--brass);color:var(--brass);border-radius:999px;white-space:nowrap;line-height:1.6}
+.chip.warn{border-color:var(--rose);color:var(--wine)}
+.chip.r18{background:var(--wine);border-color:var(--wine);color:var(--paper)}
+
+/* 音乐开关 */
+.bgm{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(122,46,42,.45);background:rgba(247,240,228,.5);color:var(--wine);border-radius:999px;padding:2px 12px 2px 8px;cursor:pointer;font-size:.85rem;letter-spacing:.14em;line-height:1.7;align-self:center}
+.bgm:hover{background:rgba(255,255,255,.6)}
+.bgm-ic{width:10px;height:10px;border-radius:50%;border:1.5px solid currentColor;position:relative}
+.bgm-ic::after{content:"";position:absolute;inset:2.5px;border-radius:50%;background:currentColor}
+.bgm[aria-pressed="true"] .bgm-ic{animation:spin 2.4s linear infinite;border-style:dashed}
+.bgm[aria-pressed="true"]{background:var(--wine);color:var(--paper);border-color:var(--wine)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 茶单 */
+.menu-bg{background:repeating-linear-gradient(90deg,var(--stripe-a) 0 22px,var(--stripe-b) 22px 30px);padding:clamp(18px,4vw,48px) clamp(8px,3vw,40px);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+.lace-card{position:relative;max-width:760px;margin:0 auto;padding:clamp(54px,7vw,78px)}
+.lace-card>svg.lace{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.menu-paper{position:relative;background:var(--card);background-image:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.55),transparent 60%),radial-gradient(ellipse at 80% 90%,rgba(120,90,60,.07),transparent 55%);padding:clamp(28px,5vw,52px) clamp(18px,5vw,56px);text-align:center}
+.menu-paper .script{font-family:var(--font-script);font-size:clamp(3rem,9vw,4.6rem);line-height:1;color:var(--lace);margin:0}
+.menu-paper .caps{font-family:var(--font-latin);font-weight:500;letter-spacing:.32em;font-size:clamp(1.3rem,3.6vw,2rem);margin:.15em 0 .1em;padding-left:.32em}
+.menu-paper .zh{letter-spacing:.6em;font-size:.85rem;color:var(--ink-soft);padding-left:.6em}
+.bow{width:120px;height:auto;display:block;margin:14px auto 4px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.25))}
+.course{margin-top:30px}
+.course h3{display:inline-block;font-family:var(--font-latin);font-weight:500;letter-spacing:.28em;font-size:1.15rem;margin:0 0 4px;padding:0 0 2px .28em;border-bottom:1px solid var(--lace)}
+.course .sub{font-size:.78rem;color:var(--ink-soft);letter-spacing:.3em;margin:4px 0 14px}
+.dish{display:block;text-decoration:none;padding:7px 4px;border-radius:2px}
+.dish:hover{background:color-mix(in srgb,var(--rose) 18%,transparent)}
+.dish .dn{font-family:var(--font-latin),var(--font-body);font-style:italic;font-size:1.22rem;line-height:1.35;overflow-wrap:anywhere}
+.dish .dn .zhn{font-family:var(--font-body);font-style:normal;font-size:1.02rem;font-weight:600}
+.dish .dm{font-size:.82rem;color:var(--ink-soft);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.menu-foot{margin-top:34px;font-family:var(--font-latin);font-style:italic;color:var(--ink-soft)}
+
+/* 阅读 */
+.reader{max-width:46rem;margin:0 auto;background:rgba(247,240,228,.9);border:1px solid rgba(255,255,255,.7);padding:clamp(20px,4vw,44px);box-shadow:0 14px 40px -24px rgba(60,30,20,.4)}
+.crumbs{font-size:.85rem;color:var(--ink-soft);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.crumbs a{text-decoration:none;border-bottom:1px solid currentColor}
+.reader h1{font-size:clamp(1.7rem,4.4vw,2.5rem);font-weight:900;letter-spacing:.04em;line-height:1.25;margin:18px 0 6px;text-wrap:balance;overflow-wrap:anywhere}
+.reader .byline{color:var(--wine);font-size:1.05rem;letter-spacing:.1em}
+.meta{margin:22px 0 8px;border:1px solid color-mix(in srgb,var(--ink) 20%,transparent);background:var(--card);display:grid;grid-template-columns:max-content minmax(0,1fr);font-size:.9rem}
+.meta dt,.meta dd{margin:0;padding:7px 14px;border-bottom:1px solid color-mix(in srgb,var(--ink) 10%,transparent)}
+.meta dt{color:var(--ink-soft);letter-spacing:.16em;background:color-mix(in srgb,var(--paper-2) 55%,transparent)}
+.meta dd{font-variant-numeric:tabular-nums}
+.meta dt:last-of-type,.meta dd:last-of-type{border-bottom:0}
+.summary{font-style:italic;color:var(--ink-soft);margin:14px 0 0}
+.tools{display:flex;gap:8px;justify-content:flex-end;margin:18px 0 6px}
+.tools button{border:1px solid color-mix(in srgb,var(--ink) 25%,transparent);background:transparent;padding:2px 12px;cursor:pointer;border-radius:2px}
+.tools button:hover{border-color:var(--wine);color:var(--wine)}
+.prose{--fs:18px;font-size:var(--fs);line-height:1.95;margin-top:10px}
+.prose p{margin:0 0 .9em;text-indent:2em;overflow-wrap:anywhere}
+.prose p.sec{text-indent:0;text-align:center;font-family:var(--font-latin);font-size:1.5em;color:var(--wine);margin:1.6em 0 .8em;letter-spacing:.1em}
+.prose p.sec::before,.prose p.sec::after{content:"❦";font-size:.55em;color:var(--brass);margin:0 .8em;vertical-align:middle}
+.prose p.note{text-indent:0;font-size:.85em;color:var(--ink-soft);font-style:italic}
+.prose p.dialog{text-indent:0;padding-left:1em;border-left:2px solid var(--rose)}
+.end{text-align:center;color:var(--brass);letter-spacing:1em;margin:40px 0 0;padding-left:1em}
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:36px}
+.pager a{display:block;padding:12px 14px;border:1px solid color-mix(in srgb,var(--ink) 18%,transparent);text-decoration:none;min-width:0}
+.pager a:hover{border-color:var(--wine)}
+.pager small{display:block;color:var(--ink-soft);letter-spacing:.2em;font-size:.75rem}
+.pager span{overflow-wrap:anywhere}
+.pager .nx{text-align:right;grid-column:2}
+.gate{margin:30px 0;padding:28px 22px;border:1px solid var(--wine);text-align:center;border-radius:4px}
+.gate h2{margin:0 0 8px;color:var(--wine);letter-spacing:.2em;font-size:1.2rem}
+.gate p{margin:0 0 18px;color:var(--ink-soft)}
+.btn{display:inline-block;background:var(--wine);color:var(--paper);border:0;padding:9px 22px;letter-spacing:.2em;cursor:pointer;text-decoration:none;border-radius:2px}
+.btn.ghost{background:transparent;color:var(--wine);border:1px solid var(--wine);margin-left:8px}
+.art{margin:26px 0 0}
+.art+.art{margin-top:14px}
+.art img{display:block;width:100%;height:auto;border:6px solid rgba(255,255,255,.6);box-shadow:0 18px 44px -20px rgba(60,30,20,.6);background:var(--card)}
+.frame-wait{margin:26px 0;aspect-ratio:3/4;max-width:360px;max-height:60vh;border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);background:repeating-linear-gradient(45deg,transparent 0 10px,color-mix(in srgb,var(--paper-2) 70%,transparent) 10px 11px),var(--card);display:grid;place-items:center;text-align:center;color:var(--ink-soft);font-size:.9rem;letter-spacing:.2em}
+.frame-wait b{display:block;font-family:var(--font-script);font-weight:400;font-size:2.4rem;color:var(--wine);letter-spacing:0}
+
+/* 画廊 */
+.sect-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 20px}
+.sect-h h1{margin:0;font-size:1.8rem;font-weight:900;letter-spacing:.2em}
+.sect-h p{margin:0;color:var(--ink-soft);font-size:.9rem}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:22px}
+.gi{text-decoration:none;display:block;min-width:0}
+.gi .ph{aspect-ratio:3/4;max-width:100%;border:1px solid rgba(255,255,255,.7);background:repeating-linear-gradient(45deg,transparent 0 10px,rgba(232,217,196,.5) 10px 11px),rgba(247,240,228,.7);display:grid;place-items:center;overflow:hidden;color:var(--ink-soft);font-size:.8rem;letter-spacing:.3em;transition:border-color .2s}
+.gi .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.gi:hover .ph{border-color:var(--wine)}
+.gi .gt{margin-top:8px;font-weight:600;overflow-wrap:anywhere;line-height:1.4}
+.gi .ga{font-size:.85rem;color:var(--ink-soft)}
+
+/* 关于 */
+.about{max-width:46rem;background:rgba(247,240,228,.85);border:1px solid rgba(255,255,255,.7);padding:clamp(20px,4vw,40px)}
+.about p{margin:0 0 1em}
+.names{display:flex;flex-wrap:wrap;gap:8px 10px;margin:14px 0 24px;padding:0;list-style:none}
+.names li{border:1px solid color-mix(in srgb,var(--ink) 18%,transparent);padding:2px 12px;background:var(--card);font-size:.92rem}
+
+footer{max-width:1180px;margin:0 auto;padding-block:20px 36px;border-top:1px solid rgba(255,255,255,.7);font-size:.8rem;color:var(--ink-soft);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+@media (max-width:860px){
+  .home{grid-template-columns:1fr;gap:26px}
+  .kv{position:static;max-width:520px;margin:0 auto}
+}
+@media (max-width:480px){
+  .wcard{grid-template-columns:1fr}
+  .wcard .m{grid-column:1;grid-row:auto;flex-direction:row;align-items:center;justify-content:flex-start;flex-wrap:wrap;text-align:left}
+  .pager{grid-template-columns:1fr}
+  .pager .nx{grid-column:1}
+  .lace-card{padding:44px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="bgfix" aria-hidden="true"></div>
+<div class="topbar glass">
+<header class="top">
+  <a class="mark" href="#"><i>Kirkland &amp; Sunshine</i><b>· 2026 纸短情长</b></a>
+  <nav aria-label="主导航">
+    <a href="#" data-nav="home">钟面</a>
+    <a href="#menu" data-nav="menu">茶单</a>
+    <a href="#gallery" data-nav="gallery">画廊</a>
+    <a href="#about" data-nav="about">关于</a>
+    <button class="bgm" id="bgm" type="button" aria-pressed="false" title="背景音乐：李斯特《爱之梦》第三首 · Emil von Sauer 演奏"><span class="bgm-ic" aria-hidden="true"></span><span class="bgm-t">爱之梦</span></button>
+  </nav>
+  <audio id="bgmAudio" src="audio/liebestraum.mp3" loop preload="none"></audio>
+</header>
+</div>
+
+<main>
+  <section class="view" id="v-home">
+    <div class="home">
+      <figure class="kv" id="kv">
+        <img src="img/key-visual.webp" width="900" height="1200" alt="主视觉：午后客厅里，亚瑟与王耀闭眼相倚坐在沙发上，桌上一杯红茶与一束粉色花，身后是留声机。">
+        <figcaption><span>主视觉 · 小红书 @主人</span><span>Make Tea Great Again</span></figcaption>
+      </figure>
+      <div>
+        <div class="lede">
+          <div class="eyebrow">Twenty-four Hours</div>
+          <h1>2026·纸短情长·好茶日<span>24H</span></h1>
+          <p class="verse">倘若这只是<br>一种虚妄的信念，可是，哦！如此频繁——<br>在黑暗中，在以各种面目出现的<br>乏味的白天里；当无益的烦闷<br>和世界的热病沉重地压迫着<br>心脏搏动的每一个节奏——<br>如此频繁，在精神上我转向你，</p>
+          <div class="stats" id="stats"></div>
+        </div>
+        <div class="clock-wrap">
+          <div class="clock-box">
+          <div class="clock-glass" aria-hidden="true"></div>
+          <svg id="clock" viewBox="0 0 760 760" role="group" aria-label="二十四小时钟面，内圈为 0 至 11 时，外圈为 12 至 23 时">
+            <defs>
+              <linearGradient id="sheenG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".18"/></linearGradient>
+            </defs>
+            <g id="rings"></g>
+            <image href="img/clock-face.png" x="80" y="80" width="600" height="600"/>
+            <g class="hand" id="hHour" style="transform-origin:380px 377px"><image href="img/hand-hour.png" x="80" y="80" width="600" height="600"/></g>
+            <g class="hand" id="hMin" style="transform-origin:380px 377px"><image href="img/hand-minute.png" x="80" y="80" width="600" height="600"/></g>
+            <g class="sheen">
+              <circle cx="380" cy="380" r="250" fill="url(#sheenG)"/>
+              <circle cx="380" cy="380" r="250" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="1.5"/>
+              <path d="M200 240 A230 230 0 0 1 330 150" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="6" stroke-linecap="round"/>
+            </g>
+          </svg>
+          </div>
+          <div class="ring-key">内圈 00–11 时 · 外圈 12–23 时 · 点亮的圆点是这一时的投稿数</div>
+          <div class="preview" id="preview" aria-live="polite"></div>
+        </div>
+        <div class="hour-panel" id="hourPanel"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="v-menu" hidden>
+    <div class="menu-bg">
+      <div class="lace-card" id="laceCard">
+        <div class="menu-paper">
+          <p class="script">Afternoon</p>
+          <p class="caps">TEA MENU</p>
+          <p class="zh">好茶日茶单</p>
+          <img class="bow" src="img/bow.webp" width="420" height="398" alt="">
+          <div id="courses"></div>
+          <p class="menu-foot">— served from midnight to midnight —</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="v-work" hidden><article class="reader" id="reader"></article></section>
+
+  <section class="view" id="v-gallery" hidden>
+    <div class="sect-h"><h1>画廊</h1><p id="galNote"></p></div>
+    <div class="gal" id="gal"></div>
+  </section>
+
+  <section class="view" id="v-about" hidden>
+    <div class="about">
+      <div class="sect-h"><h1>关于</h1></div>
+      <p>好茶日 24H 是一次朝耀（亚瑟·柯克兰 × 王耀）二十四小时接力活动。投稿按收到的先后排进钟面：从零点开始，每个整点一到两份。</p>
+      <p>文稿已全部上架，可在线阅读；画稿与少数稿件仍在收集中，标为“待上传”。部分作品含成人内容或敏感题材，进入前请先看分级与警告。</p>
+      <p><b>参与者</b>（按投稿顺序）</p>
+      <ul class="names" id="names"></ul>
+      <p>主视觉：小红书 @主人。钟面素材由主办提供。所有作品版权归各自作者所有，未经作者同意请勿转载。</p>
+    </div>
+  </section>
+</main>
+
+<footer><span>Kirkland &amp; Sunshine · 2026 纸短情长</span><span>作品版权归各自作者 · 请勿转载</span></footer>
+
+<script src="data/works.js" charset="utf-8"></script>
+<script>
+(function(){
+const W = (window.WORKS||[]).slice();
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store = { get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}} };
+const sess = { get(k){try{return sessionStorage.getItem(k)}catch(e){return null}}, set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}} };
+
+/* 投稿顺序 → 时段：前若干个整点各两份，其余各一份 */
+const N=W.length, doubles=Math.max(0,N-24);
+let idx=0;
+for(let h=0;h<24 && idx<N;h++){ const k=h<doubles?2:1; for(let j=0;j<k&&idx<N;j++){W[idx].hour=h; idx++;} }
+const byHour=Array.from({length:24},(_,h)=>W.filter(w=>w.hour===h));
+const pad=n=>String(n).padStart(2,"0");
+const HZ=["零","一","二","三","四","五","六","七","八","九","十","十一","十二","十三","十四","十五","十六","十七","十八","十九","二十","二十一","二十二","二十三"];
+const kindLabel=w=>w.kind==="文"?"文稿":w.kind==="画"?(w.img?"画稿":"画稿 · 待上传"):"稿件待补";
+const chip=w=>w.rating==="R18"?'<span class="chip r18">R18</span>':w.rating==="注意"?'<span class="chip warn">注意</span>':'<span class="chip">全年龄</span>';
+const fmtWords=n=>n>=10000?(n/10000).toFixed(1)+" 万字":n.toLocaleString("zh-CN")+" 字";
+const texts=W.filter(w=>w.kind==="文");
+const href=w=>"#w-"+w.id;
+
+/* 统计 */
+const totalWords=texts.reduce((s,w)=>s+w.words,0);
+$("#stats").innerHTML=`<span><b>${N}</b> 份投稿</span><span><b>${texts.length}</b> 篇文稿</span><span><b>${W.filter(w=>w.kind!=="文").length}</b> 份画稿 / 待补</span><span>约 <b>${(totalWords/10000).toFixed(1)}</b> 万字</span>`;
+
+/* 钟面圆环 */
+const C=380, ringsEl=$("#rings"), NS="http://www.w3.org/2000/svg";
+function arc(r1,r2,a0,a1){
+  const p=(r,a)=>{const t=(a-90)*Math.PI/180;return [C+r*Math.cos(t),C+r*Math.sin(t)]};
+  const [x1,y1]=p(r2,a0),[x2,y2]=p(r2,a1),[x3,y3]=p(r1,a1),[x4,y4]=p(r1,a0);
+  return `M${x1} ${y1}A${r2} ${r2} 0 0 1 ${x2} ${y2}L${x3} ${y3}A${r1} ${r1} 0 0 0 ${x4} ${y4}Z`;
+}
+const slots=[];
+for(let h=0;h<24;h++){
+  const pm=h>=12, r1=pm?318:262, r2=pm?370:314, a=(h%12)*30;
+  const g=document.createElementNS(NS,"g"); g.setAttribute("class","slot"); g.setAttribute("tabindex","0"); g.setAttribute("role","button");
+  const list=byHour[h];
+  g.setAttribute("aria-label",`${HZ[h]}时：`+list.map(w=>`《${w.title}》${w.author}`).join("，"));
+  const path=document.createElementNS(NS,"path"); path.setAttribute("d",arc(r1,r2,a-14.2,a+14.2)); g.appendChild(path);
+  const mid=(r1+r2)/2, t=(a-90)*Math.PI/180;
+  const tx=document.createElementNS(NS,"text"); tx.setAttribute("x",C+(mid+6)*Math.cos(t)); tx.setAttribute("y",C+(mid+6)*Math.sin(t)); tx.textContent=pad(h); g.appendChild(tx);
+  list.forEach((_,i)=>{ const off=(i-(list.length-1)/2)*4.2*Math.PI/180; const rr=r1+9;
+    const c=document.createElementNS(NS,"circle"); c.setAttribute("cx",C+rr*Math.cos(t+off)); c.setAttribute("cy",C+rr*Math.sin(t+off)); c.setAttribute("r",3.2); g.appendChild(c); });
+  g.addEventListener("mouseenter",()=>preview(h));
+  g.addEventListener("focus",()=>preview(h));
+  g.addEventListener("mouseleave",()=>preview(sel));
+  g.addEventListener("click",()=>select(h,true));
+  g.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){e.preventDefault();select(h,true);}
+    if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();const n=(h+(e.key==="ArrowRight"?1:23))%24;slots[n].focus();} });
+  ringsEl.appendChild(g); slots.push(g);
+}
+
+/* 指针：保留累计角度，避免倒转一整圈 */
+const BASE_H=256.6, BASE_M=343.4;
+let curH=0,curM=0;
+function turn(el,target,cur){ let d=((target-cur)%360+540)%360-180; const nv=cur+d; el.style.transform=`rotate(${nv}deg)`; return nv; }
+function setHands(hour,minute){
+  curH=turn($("#hHour"),(hour%12)*30+minute*0.5-BASE_H,curH);
+  curM=turn($("#hMin"),minute*6-BASE_M,curM);
+}
+let sel=null;
+function preview(h){
+  if(h===null){ $("#preview").textContent=""; return; }
+  setHands(h,0);
+  const list=byHour[h];
+  $("#preview").textContent=`${pad(h)}:00 — `+list.map(w=>`${w.title} · ${w.author}`).join("　/　");
+}
+function select(h,scroll){
+  sel=h; slots.forEach((s,i)=>s.classList.toggle("on",i===h)); preview(h);
+  const list=byHour[h];
+  $("#hourPanel").innerHTML=`<h2><em>${pad(h)}:00</em>${HZ[h]}时 · ${list.length} 道</h2><div class="cards">`+list.map(w=>
+    `<a class="wcard" href="${w.kind==="文"||w.img?href(w):"#gallery"}"><span class="t">${esc(w.title)}</span><span class="a">${esc(w.author)}${w.warn?" · "+esc(w.warn):""}</span><span class="m">${chip(w)}<span>${kindLabel(w)}${w.kind==="文"?" · "+fmtWords(w.words):""}</span></span></a>`).join("")+`</div>`;
+  if(scroll && window.matchMedia("(max-width:860px)").matches) $("#hourPanel").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+const now=new Date();
+setHands(now.getHours(),now.getMinutes());
+select(now.getHours(),false);
+
+/* 茶单 */
+const COURSES=[["MIDNIGHT","子夜 · 00–05",0,5],["MORNING","晨间 · 06–11",6,11],["AFTERNOON","午后 · 12–17",12,17],["EVENING","夜晚 · 18–23",18,23]];
+const hasCJK=s=>/[㐀-鿿]/.test(s);
+$("#courses").innerHTML=COURSES.map(([en,zh,a,b])=>`<div class="course"><h3>${en}</h3><div class="sub">${zh}</div>`+
+  W.filter(w=>w.hour>=a&&w.hour<=b).map(w=>`<a class="dish" href="${w.kind==="文"||w.img?href(w):"#gallery"}"><div class="dn">${hasCJK(w.title)?`<span class="zhn">${esc(w.title)}</span>`:esc(w.title)}</div><div class="dm">${pad(w.hour)}:00 · ${esc(w.author)} · ${kindLabel(w)}${w.kind==="文"?" · "+fmtWords(w.words):""}${w.rating!=="全年龄"?" · "+(w.rating==="R18"?"R18":"注意"):""}</div></a>`).join("")+`</div>`).join("");
+
+/* 蕾丝边：按卡片尺寸生成 */
+function drawLace(){
+  const card=$("#laceCard"); if(!card||card.offsetParent===null) return;
+  const w=card.clientWidth, band=Math.min(64,Math.max(34,w*0.075)), s=band*0.32, r=s*0.62;
+  card.style.padding=(band+4)+"px";
+  const h=card.clientHeight;
+  let old=card.querySelector("svg.lace"); if(old) old.remove();
+  const sv=document.createElementNS(NS,"svg"); sv.setAttribute("class","lace"); sv.setAttribute("viewBox",`0 0 ${w} ${h}`); sv.setAttribute("aria-hidden","true");
+  const L="var(--lace)";
+  // 外缘扇贝
+  let sc="";
+  const along=(x0,y0,x1,y1,nx,ny)=>{const len=Math.hypot(x1-x0,y1-y0),n=Math.max(2,Math.round(len/s)); for(let i=0;i<=n;i++){const x=x0+(x1-x0)*i/n,y=y0+(y1-y0)*i/n; sc+=`<circle cx="${x+nx*r*0.15}" cy="${y+ny*r*0.15}" r="${r}"/>`;}};
+  const o=r*0.9;
+  along(o,o,w-o,o,0,-1); along(w-o,o,w-o,h-o,1,0); along(w-o,h-o,o,h-o,0,1); along(o,h-o,o,o,-1,0);
+  // 内缘小牙
+  let pc=""; const ib=band, pr=r*0.38, ps=pr*2.4;
+  const picot=(x0,y0,x1,y1)=>{const len=Math.hypot(x1-x0,y1-y0),n=Math.round(len/ps); for(let i=0;i<=n;i++){pc+=`<circle cx="${x0+(x1-x0)*i/n}" cy="${y0+(y1-y0)*i/n}" r="${pr}"/>`;}};
+  picot(ib,ib,w-ib,ib);picot(w-ib,ib,w-ib,h-ib);picot(w-ib,h-ib,ib,h-ib);picot(ib,h-ib,ib,ib);
+  const t=Math.max(10,band*0.28);
+  sv.innerHTML=`<defs>
+    <pattern id="mesh" width="${t}" height="${t*0.866}" patternUnits="userSpaceOnUse">
+      <path d="M0 ${t*0.433} L${t*0.25} 0 L${t*0.75} 0 L${t} ${t*0.433} L${t*0.75} ${t*0.866} L${t*0.25} ${t*0.866}Z" fill="none" stroke="${L}" stroke-width="0.9"/>
+    </pattern>
+    <pattern id="flor" width="${t*2.4}" height="${t*2.4}" patternUnits="userSpaceOnUse">
+      <g fill="${L}" transform="translate(${t*1.2} ${t*1.2})">
+        <ellipse rx="${t*0.18}" ry="${t*0.42}"/><ellipse rx="${t*0.42}" ry="${t*0.18}"/>
+        <ellipse rx="${t*0.16}" ry="${t*0.38}" transform="rotate(45)"/><ellipse rx="${t*0.16}" ry="${t*0.38}" transform="rotate(-45)"/>
+      </g><circle cx="${t*1.2}" cy="${t*1.2}" r="${t*0.12}" fill="#F7F0E4"/>
+      <circle cx="0" cy="0" r="${t*0.22}" fill="none" stroke="${L}" stroke-width="1.4"/>
+    </pattern>
+    <mask id="bandM"><rect width="${w}" height="${h}" fill="#fff"/><rect x="${ib}" y="${ib}" width="${w-2*ib}" height="${h-2*ib}" fill="#000"/></mask>
+    <mask id="scM"><rect width="${w}" height="${h}" fill="#000"/><g fill="#fff">${sc}</g><rect x="${o}" y="${o}" width="${w-2*o}" height="${h-2*o}" fill="#fff"/><rect x="${ib}" y="${ib}" width="${w-2*ib}" height="${h-2*ib}" fill="#000"/></mask>
+  </defs>
+  <g mask="url(#scM)">
+    <rect width="${w}" height="${h}" fill="${L}" opacity=".18"/>
+    <rect width="${w}" height="${h}" fill="url(#mesh)" opacity=".85"/>
+    <rect width="${w}" height="${h}" fill="url(#flor)"/>
+  </g>
+  <g fill="none" stroke="${L}" stroke-width="1.6" opacity=".9">${sc.replace(/\/>/g,' fill="none"/>')}</g>
+  <rect x="${o}" y="${o}" width="${w-2*o}" height="${h-2*o}" fill="${L}" opacity="0" />
+  <rect x="${ib-band*0.28}" y="${ib-band*0.28}" width="${w-2*ib+band*0.56}" height="${h-2*ib+band*0.56}" fill="none" stroke="${L}" stroke-width="${Math.max(3,band*0.12)}"/>
+  <rect x="${ib-band*0.5}" y="${ib-band*0.5}" width="${w-2*ib+band}" height="${h-2*ib+band}" fill="none" stroke="${L}" stroke-width="1" stroke-dasharray="2 3"/>
+  <g fill="${L}">${pc}</g>
+  <rect x="${ib}" y="${ib}" width="${w-2*ib}" height="${h-2*ib}" fill="none" stroke="${L}" stroke-width="2.2"/>`;
+  card.insertBefore(sv,card.firstChild);
+}
+let rz; window.addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(drawLace,120)});
+
+/* 阅读页 */
+function paraClass(x){
+  if(/^(\d{1,2}|0\d)[\.、．]?$/.test(x)) return "sec";
+  if(/^[*＊〔]/.test(x)||/^(—完—|完|（完）)$/.test(x)) return "note";
+  return "";
+}
+function renderWork(id){
+  const w=W.find(x=>x.id===id); const el=$("#reader");
+  if(!w){ el.innerHTML=`<p>没有找到这篇作品。<a href="#menu">回到茶单</a></p>`; return; }
+  const ti=texts.indexOf(w), prev=texts[ti-1], next=texts[ti+1];
+  const meta=[["分级",chip(w)+(w.rating==="注意"?" 含敏感内容":w.rating==="R18"?" 仅限成年读者":"")],["警告",esc(w.warn||"无")],["类型",kindLabel(w)],["时段",`${pad(w.hour)}:00 · ${HZ[w.hour]}时`],["作者",esc(w.author)],["配对","亚瑟·柯克兰 × 王耀"]];
+  if(w.kind==="文") meta.push(["字数",w.words.toLocaleString("zh-CN")]);
+  let html=`<div class="crumbs"><a href="#menu">茶单</a><span>/</span><span>${pad(w.hour)}:00</span></div>
+    <h1>${esc(w.title)}</h1><div class="byline">${esc(w.author)}</div>
+    <dl class="meta">${meta.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>
+    ${w.summary?`<p class="summary">${esc(w.summary)}</p>`:""}`;
+  const unlocked = w.rating!=="R18" || sess.get("r18ok")==="1";
+  if(!unlocked){
+    html+=`<div class="gate glass"><h2>R18 · 成年读者限定</h2><p>本篇含露骨的性描写。继续即表示你已年满 18 岁。</p><button class="btn" id="gateGo">我已成年，继续阅读</button><a class="btn ghost" href="#menu">返回茶单</a></div>`;
+  } else if(w.kind==="文"){
+    html+=`<div class="tools" aria-label="字号"><button id="fsDown" aria-label="缩小字号">A−</button><button id="fsUp" aria-label="放大字号">A+</button></div>
+      <div class="prose" id="prose">${w.body.map(x=>{const c=paraClass(x);return `<p${c?` class="${c}"`:""}>${esc(x)}</p>`}).join("")}</div><p class="end">❦ ❦ ❦</p>`;
+  } else {
+    html+=(w.img?(w.imgs||[{src:w.img,w:w.imgw,h:w.imgh}]).map((im,i)=>`<figure class="art"><img src="${im.src}" width="${im.w}" height="${im.h}" alt="${esc(w.title)} · ${esc(w.author)}${w.imgs?` · ${i+1}/${w.imgs.length}`:""}" loading="${i?"lazy":"eager"}"></figure>`).join(""):`<div class="frame-wait"><div><b>soon</b>${w.kind==="画"?"画稿待上传":"稿件待补"}</div></div>`)+(w.body.length?`<div class="prose">${w.body.map(x=>`<p>${esc(x)}</p>`).join("")}</div>`:"");
+  }
+  if(w.kind==="文") html+=`<nav class="pager" aria-label="上一篇与下一篇">${prev?`<a href="${href(prev)}"><small>上一篇</small><span>${esc(prev.title)}</span></a>`:""}${next?`<a class="nx" href="${href(next)}"><small>下一篇</small><span>${esc(next.title)}</span></a>`:""}</nav>`;
+  el.innerHTML=html;
+  const go=$("#gateGo"); if(go) go.onclick=()=>{sess.set("r18ok","1");renderWork(id);};
+  const pr=$("#prose");
+  if(pr && w.kind==="文"){
+    let fs=parseInt(store.get("fs")||"18",10); const apply=()=>{pr.style.setProperty("--fs",fs+"px");store.set("fs",fs)}; apply();
+    $("#fsDown").onclick=()=>{fs=Math.max(15,fs-1);apply()}; $("#fsUp").onclick=()=>{fs=Math.min(24,fs+1);apply()};
+  }
+}
+
+/* 画廊 */
+const pics=W.filter(w=>w.kind!=="文");
+const upN=pics.filter(w=>w.img).length;
+$("#galNote").textContent=`已上架 ${upN+1} 份 · 待上传 ${pics.length-upN} 份`;
+const picSorted=[...pics.filter(w=>w.img),...pics.filter(w=>!w.img)];
+$("#gal").innerHTML=`<a class="gi" href="#kv"><div class="ph"><img src="img/key-visual.webp" alt="主视觉" loading="lazy"></div><div class="gt">主视觉</div><div class="ga">小红书 @主人</div></a>`+
+  picSorted.map(w=>`<a class="gi" href="#w-${w.id}"><div class="ph">${w.img?`<img src="${w.img}" alt="${esc(w.title)}" loading="lazy">`:(w.kind==="画"?"待上传":"待补")}</div><div class="gt">${esc(w.title)}</div><div class="ga">${esc(w.author)} · ${pad(w.hour)}:00</div></a>`).join("");
+
+/* 参与者 */
+const seen=new Set(); $("#names").innerHTML=W.filter(w=>!seen.has(w.author)&&seen.add(w.author)).map(w=>`<li>${esc(w.author)}</li>`).join("");
+
+
+/* 背景音乐：只在用户点击后播放 */
+(function(){
+  const au=$("#bgmAudio"),bt=$("#bgm"); if(!au||!bt) return;
+  au.volume=0.4;
+  const set=on=>{bt.setAttribute("aria-pressed",on?"true":"false");bt.title=(on?"暂停":"播放")+"背景音乐：李斯特《爱之梦》第三首 · Emil von Sauer 演奏";};
+  bt.addEventListener("click",()=>{ if(au.paused){ au.play().then(()=>{set(true);store.set("bgm","1")}).catch(()=>set(false)); } else { au.pause(); set(false); store.set("bgm","0"); } });
+  au.addEventListener("pause",()=>set(false)); au.addEventListener("play",()=>set(true));
+})();
+
+/* 路由 */
+function route(){
+  const h=(location.hash||"").slice(1);
+  let v="home";
+  if(h==="menu"||h==="gallery"||h==="about") v=h;
+  else if(/^w-\d+$/.test(h)) v="work";
+  document.querySelectorAll(".view").forEach(s=>s.hidden=s.id!=="v-"+v);
+  document.querySelectorAll("nav a").forEach(a=>a.toggleAttribute("aria-current",a.dataset.nav===v||(v==="work"&&a.dataset.nav==="menu")));
+  if(v==="work") renderWork(parseInt(h.slice(2),10));
+  if(v==="menu"){ requestAnimationFrame(drawLace); if(document.fonts) document.fonts.ready.then(drawLace); }
+  document.querySelectorAll('nav a[aria-current]').forEach(a=>a.setAttribute("aria-current","page"));
+  if(v!=="home") window.scrollTo(0,0);
+  const w=v==="work"&&W.find(x=>x.id===parseInt(h.slice(2),10));
+  document.title=w?`${w.title} · 好茶日 24H`:"好茶日 24H";
+}
+window.addEventListener("hashchange",route); route();
+})();
+</script>
