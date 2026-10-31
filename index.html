@@ -440,7 +440,7 @@ function renderWork(id){
   const w=W.find(x=>x.id===id); const el=$("#reader");
   if(!w){ el.innerHTML=`<p>没有找到这篇作品。<a href="#menu">回到茶单</a></p>`; return; }
   const ti=texts.indexOf(w), prev=texts[ti-1], next=texts[ti+1];
-  const meta=[["分级",chip(w)+(w.rating==="注意"?" 含敏感内容":w.rating==="R18"?" 仅限成年读者":"")],["警告",esc(w.warn||"无")],["类型",kindLabel(w)],["时段",`${pad(w.hour)}:00 · ${HZ[w.hour]}时`],["作者",esc(w.author)],["配对","亚瑟·柯克兰 × 王耀"]];
+  const meta=[["分级",chip(w)+(w.rating==="注意"?" 含敏感内容":w.rating==="R18"?" 仅限成年读者":"")],["警告",esc(w.warn||"无")],["类型",kindLabel(w)],["时段",`${pad(w.hour)}:00 · ${HZ[w.hour]}时`],["作者",esc(w.author)]];
   if(w.kind==="文") meta.push(["字数",w.words.toLocaleString("zh-CN")]);
   let html=`<div class="crumbs"><a href="#menu">茶单</a><span>/</span><span>${pad(w.hour)}:00</span></div>
     <h1>${esc(w.title)}</h1><div class="byline">${esc(w.author)}</div>
